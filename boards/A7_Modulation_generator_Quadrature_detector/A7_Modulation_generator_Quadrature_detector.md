@@ -7,19 +7,25 @@ Description from block diagram and manual.
 - Schematic number: 942030008
 - PC board number: 956300018
 
+## [Photos]
+![Front](A7_Front.jpg)
+![Back](A7_Back.jpg)
+
+<details><summary>More Images</summary>
+
+![Extra](A7_Back_2.jpg)
+![Extra](A7_Front_2.jpg)
+![Extra](A7_Front_3.jpg)
+![Extra](A7_Front_4.jpg)
+![Extra](A7_Front_5.jpg)
+</details>
+
 ## [Debug]
-*(Add debugging logs and results here)*
 
 ## [Findings]
-*(Add reverse-engineered information here)*
 
 ## [Comments]
-*(Freeform notes and repair hints)*
 
 ## [BOM]
 | Ref | Part | Description | Notes |
 |-----|------|-------------|-------|
-
-## [Photos]
-![Front view](A7_Front.jpg)  
-![Back view](A7_Back.jpg)

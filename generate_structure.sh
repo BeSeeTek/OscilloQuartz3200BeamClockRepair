@@ -2,110 +2,99 @@
 
 set -e
 
-root_dir="Oscilloquartz-3200-Repair"
-boards_dir="$root_dir/boards"
-mkdir -p "$boards_dir"
+JQ=$(command -v jq)
+[[ -z "$JQ" ]] && { echo "jq is required. Install it and rerun."; exit 1; }
 
-cp -n 3200BlockDiagramm.png "$root_dir/" 2>/dev/null || true
+STRUCTURE="./structure.json"
+BOARDS_DIR="./boards"
+PHOTOS_DIR="./photos"
+MANUALS_DIR="./manuals"
+ROOT_DIR="."
 
-declare -A module_names=(
-  ["A1"]="Cesium oven supply"
-  ["A2"]="Power supply +5V, -U ionizer, 26 kHz generator"
-  ["A3"]="Power supply +U1, +U2, C-field, EMVH regulation, Pump alarm logic"
-  ["A4"]="Buffer amplifier 5 MHz"
-  ["A5"]="Synthesizer"
-  ["A6"]="VCXO 12.631770 MHz"
-  ["A7"]="Modulation generator, Quadrature detector"
-  ["A8"]="Synchronous detector, Integrator, Summing"
-  ["A9"]="Pre-amplifier, Servo amplifier"
-  ["A10"]="2nd harmonic detector, Alarm logic"
-)
+echo "🔄 Consolidating board folders..."
 
-declare -A schematic_numbers=(
-  ["A1"]="942030002"
-  ["A2"]="942030003"
-  ["A3"]="942030010"
-  ["A4"]="942030012"
-  ["A5"]="942030011"
-  ["A6"]="942030017"
-  ["A7"]="942030008"
-  ["A8"]="942030013"
-  ["A9"]="942030007"
-  ["A10"]="942030009"
-)
+# Clean up duplicates by finding canonical name from JSON
+for module in $(jq -r '.boards | keys[]' "$STRUCTURE"); do
+  raw_name=$(jq -r ".boards[\"$module\"].name" "$STRUCTURE")
+  clean_name=$(echo "${module}_${raw_name}" | sed 's/[^a-zA-Z0-9]/_/g' | sed 's/__/_/g')
+  target="$BOARDS_DIR/$clean_name"
+  mkdir -p "$target"
 
-declare -A pcb_numbers=(
-  ["A1"]="956300015"
-  ["A2"]="956300016"
-  ["A3"]="956300020"
-  ["A4"]="956300022"
-  ["A5"]="956300021"
-  ["A6"]="956300024"
-  ["A7"]="956300018"
-  ["A8"]="956300023"
-  ["A9"]="956300017"
-  ["A10"]="956300019"
-)
+  echo "📁 Merging for $module → $clean_name"
 
-# Overview generation
-overview="$root_dir/overview.md"
-echo "# Oscilloquartz 3200 Repair Documentation" > "$overview"
-echo "" >> "$overview"
-echo "![Block Diagram](3200BlockDiagramm.png)" >> "$overview"
-echo "" >> "$overview"
-echo "## Module Overview" >> "$overview"
-echo "" >> "$overview"
+  # Move photos and .mds from matching folders
+  find "$BOARDS_DIR" -maxdepth 1 -type d -iname "${module}_*" ! -path "$target" | while read other; do
+    mv "$other"/* "$target/" 2>/dev/null || true
+    rmdir "$other" 2>/dev/null || true
+  done
 
-# Board loop
-for module in "${!module_names[@]}"; do
-  name="${module_names[$module]}"
-  schematic="${schematic_numbers[$module]}"
-  pcb="${pcb_numbers[$module]}"
-  safe_name=$(echo "${module}_${name}" | sed 's/[^a-zA-Z0-9]/_/g' | sed 's/__/_/g')
-  folder="$boards_dir/$safe_name"
-  mkdir -p "$folder"
+  # Generate markdown
+  md="$target/${clean_name}.md"
+  schematic=$(jq -r ".boards[\"$module\"].schematic" "$STRUCTURE")
+  pcb=$(jq -r ".boards[\"$module\"].pcb" "$STRUCTURE")
 
-  # Image placeholders
-  [[ -f "$folder/${module}_Front.jpg" ]] || touch "$folder/${module}_Front.jpg"
-  [[ -f "$folder/${module}_Back.jpg" ]] || touch "$folder/${module}_Back.jpg"
+  FRONT_IMG=$(find "$target" -iname "${module}_Front.jpg" | head -n1)
+  BACK_IMG=$(find "$target" -iname "${module}_Back.jpg" | head -n1)
 
-  # Markdown filename
-  md_file="$folder/${safe_name}.md"
+  echo "# $module — $raw_name" > "$md"
+  echo "" >> "$md"
+  echo "## [Function]" >> "$md"
+  echo "Description from block diagram and manual." >> "$md"
+  echo "" >> "$md"
+  echo "## [Board Info]" >> "$md"
+  echo "- Schematic number: $schematic" >> "$md"
+  echo "- PC board number: $pcb" >> "$md"
+  echo "" >> "$md"
+  echo "## [Photos]" >> "$md"
+  [[ -f "$FRONT_IMG" ]] && echo "![Front]($(basename "$FRONT_IMG"))" >> "$md"
+  [[ -f "$BACK_IMG" ]] && echo "![Back]($(basename "$BACK_IMG"))" >> "$md"
 
-  # Only create if not yet present
-  if [[ ! -f "$md_file" ]]; then
-    cat <<EOF > "$md_file"
-# $module — $name
-
-## [Function]
-Description from block diagram and manual.
-
-## [Board Info]
-- Schematic number: $schematic
-- PC board number: $pcb
-
-## [Debug]
-*(Add debugging logs and results here)*
-
-## [Findings]
-*(Add reverse-engineered information here)*
-
-## [Comments]
-*(Freeform notes and repair hints)*
-
-## [BOM]
-| Ref | Part | Description | Notes |
-|-----|------|-------------|-------|
-
-## [Photos]
-![Front view](${module}_Front.jpg)  
-![Back view](${module}_Back.jpg)
-EOF
-  fi
-
-  # Add to overview (skip if already listed)
-  relative_path="boards/$safe_name/$(basename "$md_file")"
-  grep -q "$relative_path" "$overview" || echo "- [$module — $name]($relative_path)" >> "$overview"
+  echo "" >> "$md"
+  echo "<details><summary>More Images</summary>" >> "$md"
+  echo "" >> "$md"
+  find "$target" -iname "${module}_*.jpg" ! -iname "*Front.jpg" ! -iname "*Back.jpg" | sort | while read img; do
+    echo "![Extra]($(basename "$img"))" >> "$md"
+  done
+  echo "</details>" >> "$md"
+  echo "" >> "$md"
+  echo "## [Debug]" >> "$md"
+  echo "" >> "$md"
+  echo "## [Findings]" >> "$md"
+  echo "" >> "$md"
+  echo "## [Comments]" >> "$md"
+  echo "" >> "$md"
+  echo "## [BOM]" >> "$md"
+  echo "| Ref | Part | Description | Notes |" >> "$md"
+  echo "|-----|------|-------------|-------|" >> "$md"
 done
 
-echo "✅ Folder structure and docs are ready in '$root_dir'"
+echo "🧩 Building overview.md..."
+
+OVERVIEW="$ROOT_DIR/overview.md"
+BLOCK_DIAGRAM=$(jq -r '.block_diagram' "$STRUCTURE")
+MANUAL=$(jq -r '.manual' "$STRUCTURE")
+
+echo "# Oscilloquartz 3200 Repair Overview" > "$OVERVIEW"
+echo "" >> "$OVERVIEW"
+
+# Instrument photos
+echo "## Instrument Photos" >> "$OVERVIEW"
+jq -r '.instrument_photos[]' "$STRUCTURE" | while read photo; do
+  base=$(basename "$photo")
+  echo "![${base}]($photo)" >> "$OVERVIEW"
+done
+
+echo "" >> "$OVERVIEW"
+echo "## Block Diagram" >> "$OVERVIEW"
+echo "![Block Diagram]($BLOCK_DIAGRAM)" >> "$OVERVIEW"
+echo "" >> "$OVERVIEW"
+echo "## 📖 Manual" >> "$OVERVIEW"
+echo "[View manual]($MANUAL)" >> "$OVERVIEW"
+echo "" >> "$OVERVIEW"
+
+echo "## Boards" >> "$OVERVIEW"
+echo "" >> "$OVERVIEW"
+jq -r '.boards | to_entries[] | "- [\(.key) — \(.value.name)](boards/\(.key)_\(.value.name | gsub("[^a-zA-Z0-9]"; "_") | gsub("__"; "_"))/\(.key)_\(.value.name | gsub("[^a-zA-Z0-9]"; "_") | gsub("__"; "_")).md)"' "$STRUCTURE" >> "$OVERVIEW"
+
+echo "✅ Flattened structure updated and ready."
+

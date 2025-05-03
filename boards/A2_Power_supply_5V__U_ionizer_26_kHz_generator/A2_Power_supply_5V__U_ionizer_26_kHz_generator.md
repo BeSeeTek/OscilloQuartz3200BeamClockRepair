@@ -7,19 +7,25 @@ Description from block diagram and manual.
 - Schematic number: 942030003
 - PC board number: 956300016
 
+## [Photos]
+![Front](A2_Front.jpg)
+![Back](A2_Back.jpg)
+
+<details><summary>More Images</summary>
+
+![Extra](A2_Back_2.jpg)
+![Extra](A2_Back_3.jpg)
+![Extra](A2_Back_4.jpg)
+![Extra](A2_Front_2.jpg)
+![Extra](A2_Front_3.jpg)
+</details>
+
 ## [Debug]
-*(Add debugging logs and results here)*
 
 ## [Findings]
-*(Add reverse-engineered information here)*
 
 ## [Comments]
-*(Freeform notes and repair hints)*
 
 ## [BOM]
 | Ref | Part | Description | Notes |
 |-----|------|-------------|-------|
-
-## [Photos]
-![Front view](A2_Front.jpg)  
-![Back view](A2_Back.jpg)
