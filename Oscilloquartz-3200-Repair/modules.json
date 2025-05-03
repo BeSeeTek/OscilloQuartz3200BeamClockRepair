@@ -1,0 +1,52 @@
+{
+  "A1": {
+    "name": "Cesium oven supply",
+    "schematic": "942030002",
+    "pcb": "956300015"
+  },
+  "A2": {
+    "name": "Power supply +5V, -U ionizer, 26 kHz generator",
+    "schematic": "942030003",
+    "pcb": "956300016"
+  },
+  "A3": {
+    "name": "Power supply +U1, +U2, C-field, EMVH regulation, Pump alarm logic",
+    "schematic": "942030010",
+    "pcb": "956300020"
+  },
+  "A4": {
+    "name": "Buffer amplifier 5 MHz",
+    "schematic": "942030012",
+    "pcb": "956300022"
+  },
+  "A5": {
+    "name": "Synthesizer",
+    "schematic": "942030011",
+    "pcb": "956300021"
+  },
+  "A6": {
+    "name": "VCXO 12.631770 MHz",
+    "schematic": "942030017",
+    "pcb": "956300024"
+  },
+  "A7": {
+    "name": "Modulation generator, Quadrature detector",
+    "schematic": "942030008",
+    "pcb": "956300018"
+  },
+  "A8": {
+    "name": "Synchronous detector, Integrator, Summing",
+    "schematic": "942030013",
+    "pcb": "956300023"
+  },
+  "A9": {
+    "name": "Pre-amplifier, Servo amplifier",
+    "schematic": "942030007",
+    "pcb": "956300017"
+  },
+  "A10": {
+    "name": "2nd harmonic detector, Alarm logic",
+    "schematic": "942030009",
+    "pcb": "956300019"
+  }
+}
