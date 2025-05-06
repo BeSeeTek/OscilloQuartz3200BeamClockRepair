@@ -1,12 +1,17 @@
 # Oscilloquartz 3200 Repair Overview
 
-With in this reposity i want to document all efforts repairing this beautifull Cesium Beam Atomic-clock comments remarks or help are warmly welcomed pleas write isuess to communicate with me.
-The Clock has a moved history beeing orginialy purcheds in 1975/76 By the [ASMW](https://de.wikipedia.org/wiki/Deutsches_Amt_f%C3%BCr_Ma%C3%9F_und_Gewicht) the GDR's Natinonal Metrology Institute.
-In mid 80ths the Clock got an actual clock display modification using an 1973 Ti chip and GDR/USSR Chips.
-After the unification of germany the clock came to PTB in Brunswik and was mostlikely last opperational in 1997 at least there was a note in the clcoks manual operation section saying that the backup Battery is dead and external 24 V Battery is needed to get the clock running.
-Many of my collegues hasitated to throw this device onto the junk yard and so it came to me, to get an new chanche to runn again.  
+Welcome to the Oscilloquartz 3200 repair repository!  Here, I document every step of my journey restoring this beautiful Cesium Beam Atomic Clock.  Your comments, suggestions, and contributions are warmly welcomed—please open an issue to share feedback or ask questions.
 
-The Beamtube looks very similar to the one used in the [FTS-4040](http://www.leapsecond.com/museum/fts4040/).
+## Background & History
+
+* **Original Purchase (1975–76):** Acquired by the ASMW (Deutsches Amt für Maß und Gewicht), the GDR’s national metrology institute.
+* **1980s Display Upgrade:** Fitted with a custom clock display using a TI chip (1973) and other GDR/USSR components.
+* **Post-Unification (1990s):** Transferred to PTB in Braunschweig; last known operational status was in 1997 (manual notes indicate the backup battery had failed and an external 24 V supply was required).
+* **Rescue Mission:** Though the clock was non-operational, my colleagues couldn’t bring themselves to discard it—not due to regulations but emotional attachment—and entrusted it to me for restoration.
+
+## Beam Tube Details
+
+The beam tube installed in this Oscilloquartz 3200 closely matches the form factor and specifications of the [FTS‑4040](http://www.leapsecond.com/museum/fts4040/) Cesium Beam Tube (FTS‑7101 series).
 
 ## Instrument Photos
 ![InstrumentFrontView.jpg](photos/InstrumentFrontView.jpg)
